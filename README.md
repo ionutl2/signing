@@ -1,5 +1,4 @@
 # Add-on to digitally sign a document inside Google Sheets
-Add-on to digitaly sign a document in Google Sheets
 
 To use this Google Script add-on you can either 
   - manually create the files in a new document bound script 
