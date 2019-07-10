@@ -3,7 +3,7 @@ function onInstall() {
 }
 
 function onOpen() {
-  var ui = SpreadsheetApp.getUi();
+  var ui = DocumentApp.getUi();
   var menu = ui.createMenu('Signatures');
   menu.addItem('Add new', 'loginUI');
   menu.addItem('View all', 'versionUI');
@@ -13,11 +13,11 @@ function onOpen() {
   menu.addToUi();
 }
 function show_setup() {
-  var ui = SpreadsheetApp.getUi();
+  var ui = DocumentApp.getUi();
   ui.showModalDialog(HtmlService.createHtmlOutputFromFile('UI_client_settings'), 'Add-on parameters');
 }
 function show_about() {
-  var ui = SpreadsheetApp.getUi();
+  var ui = DocumentApp.getUi();
 }
 
 function loop_change_login_cert() {
@@ -30,12 +30,12 @@ function loop_change_login_cert() {
 }
 function versionUI() {
   var html = HtmlService.createHtmlOutputFromFile('UI_client_versions');
-  var ui = SpreadsheetApp.getUi();
+  var ui = DocumentApp.getUi();
   html.setTitle('Signed versions');
   ui.showSidebar(html);
 }
 function loginUI(debug) {
-  var ui = SpreadsheetApp.getUi();
+  var ui = DocumentApp.getUi();
   var client_id = get('client_id',true);
   var client_secret = get('client_secret',true);
   var response_type = 'token';
@@ -52,11 +52,11 @@ function loginUI(debug) {
 }
 function close_win() {
   var html = HtmlService.createHtmlOutput("<script>google.script.host.close();</script>").setTitle('Closing ...');
-  SpreadsheetApp.getUi().showSidebar(html);
+  DocumentApp.getUi().showSidebar(html);
 }
 
 function certificate_UI() {
 
-  var ui = SpreadsheetApp.getUi();
+  var ui = DocumentApp.getUi();
   ui.showSidebar(HtmlService.createHtmlOutputFromFile('UI_client_certificates').setTitle('Available certificates'));
 }

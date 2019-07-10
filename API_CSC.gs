@@ -283,7 +283,7 @@ function request_auth_SAD() {
   var auth_password = get('user_login_password');
   var otp = get('credential_select_for_signing_OTP');
   var selected_credential_ID = get('selected_credential_ID');
-  var pdf_file = SpreadsheetApp.getActive().getAs('application/pdf');
+  var pdf_file = DocumentApp.getActiveDocument().getAs('application/pdf');
   DSSAPI_get_document_hash(pdf_file);
   var hash = get('document_hash_for_signature');
   if (!access_token) {
