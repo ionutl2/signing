@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script>
+    function show_pin_otp_prompt(alias) {
+      var code = '<div class="form-group">' +
+        '<h4 align="center">Certificate used:' +
+        alias + '</h4>' +
+        '<label class="form-check-label" for="pin">Signing password:</label>' +
+        '<input type="password" id="pin" class="form-control">' +
+        '<label class="form-check-label" for="otp">TAN Code (SMS):</label>' +
+        '<input type="text" id="otp" class="form-control">' +
+        '</div>' +
+        '</div>' +
+        '<div class="container">' +
+        '<div class="form-group">' +
+        '<label for="commitmenttype" class="form-check-label">Commitment Type:</label>' +
+        '<select multiple class="form-control" id="commitmenttype" name="commitmenttype">' +
+        '<option value="1.2.840.113549.1.9.16.6.1">Proof of origin</option>' +
+        '<option value="1.2.840.113549.1.9.16.6.2">Proof of receipt</option>' +
+        '<option value="1.2.840.113549.1.9.16.6.3">Proof of delivery</option>' +
+        '<option value="1.2.840.113549.1.9.16.6.4">Proof of sender</option>' +
+        '<option value="1.2.840.113549.1.9.16.6.5">Proof of approval</option>' +
+        '<option value="1.2.840.113549.1.9.16.6.6">Proof of creation</option>' +
+        '</select>' +
+        '<a class="form-check-label">CTRL+click to select more than one</a>' +
+        '</div>' +
+        '<input type="text" class="form-control" placeholder="Claimed role" id="claimedSignerRoles"></input>' +
+        '<a class="form-check-label">Ex: \"Sales Manager, CFO\"</a>' +
+        '<br>' +
+        '</div>' +
+        '<div class="container">' +
+        '<button type="button" onclick="show_signature_result()" class="btn btn-primary btn-block"> Sign </button>' +
+        '</div>';
+      document.body.innerHTML = code;
+    }
+
+    function error_handler(error) {
+      let html_result = '<div class="alert alert-danger"> <h3>Error!</h3><strong>Details:</strong><br>' + error + '</div> ' +
+        '<button type="button" class="btn btn-secondary btn-block .btn-sm" onclick="google.script.run.loginUI()" >Start over</button>';
+      document.body.innerHTML = html_result;
+    }
+
+    function confirm_certificate_selection() {
+      document.getElementById('btn-conf').innerHTML = '<button type="button" class="btn btn-secondary btn-block .btn-sm disabled"> <span class="spinner-border spinner-border-sm"></span> Submitting</button>'
+      google.script.run
+        .withFailureHandler(error_handler)
+        .withSuccessHandler(show_pin_otp_prompt)
+        .get_certificate_choice_alias();
+    }
+
+    function show_signature_result4(link) {
+      let html_result = '<div class="alert alert-success"> <strong>Success!</strong> The document was signed.</div> <button type="button" class="btn btn-outline-success btn-block .btn-sm" onclick="window.open(\'' + link +
+        '\',\'_blank\')" >Open</button>' +
+        '<button type="button" class="btn btn-secondary btn-block .btn-sm" onclick="google.script.run.close_win()" >Close</button>';
+      document.body.innerHTML = html_result;
+    }
+
+    function show_signature_result3() {
+      let html_result = '<div class="alert alert-info"> <strong>Succes!</strong>The document was signed. <br></div> ' +
+        '</div> <button type="button" class="btn btn-secondary btn-block .btn-sm disabled"> <span class="spinner-border spinner-border-sm"></span> Please wait</button>';
+      document.body.innerHTML = html_result;
+      google.script.run
+        .withSuccessHandler(show_signature_result4)
+        .withFailureHandler(error_handler)
+        .get_download_link();
+    }
+
+    function show_signature_result2() {
+      google.script.run
+        .withSuccessHandler(show_signature_result3)
+        .withFailureHandler(error_handler)
+        .request_auth_SAD();
+      let html_result = '<div class="alert alert-primary"> Signing document... <br>' +
+        '</div> <button type="button" class="btn btn-secondary btn-block .btn-sm disabled"> <span class="spinner-border spinner-border-sm"></span> Please wait</button>';
+      document.body.innerHTML = html_result;
+    }
+
+    function show_signature_result() {
+      let pin = document.getElementById('pin').value;
+      let otp = document.getElementById('otp').value;
+      let commitmenttype = [];
+      let claimedSignerRoles = "";
+      claimedSignerRoles = document.getElementById('claimedSignerRoles').value;
+      /*var commitmentTypes = {
+        ProofOfOrigin: "1.2.840.113549.1.9.16.6.1",
+        ProofOfReceipt: "1.2.840.113549.1.9.16.6.2",
+        ProofOfDelivery: "1.2.840.113549.1.9.16.6.3",
+        ProofOfSender: "1.2.840.113549.1.9.16.6.4",
+        ProofOfApproval: "1.2.840.113549.1.9.16.6.5",
+        ProofOfCreation: "1.2.840.113549.1.9.16.6.6"
+      };*/
+      if (typeof claimedSignerRoles == 'string')
+        claimedSignerRoles = [claimedSignerRoles];
+      if (document.getElementById('commitmenttype').selectedOptions)
+        for (var i = 0, x = document.getElementById('commitmenttype').selectedOptions; i < x.length; i++) {
+          commitmenttype.push(x[i].value);
+          }
+      else
+        console.log('No commitmenttype')      
+      if (!pin || pin.length < 5 || !otp || otp.length < 5)
+        return;
+      google.script.run
+        .withFailureHandler(error_handler)
+        .withSuccessHandler(show_signature_result2)
+        .savePIN_OTP(pin, otp, commitmenttype, claimedSignerRoles);
+      let html_result = '<div class="alert alert-secondary"> Saving authentication data ... <br>' +
+        '</div> <button type="button" class="btn btn-secondary btn-block .btn-sm disabled"> <span class="spinner-border spinner-border-sm"></span>Please wait</button>';
+      document.body.innerHTML = html_result;
+    }
+
+    function certificate_select(i) {
+      google.script.run
+        .withFailureHandler(error_handler)
+        .save_certificate_selection(i);
+      let cards = document.getElementsByClassName('card');
+      for (let card of cards) {
+        card.style.boxShadow = '0 0px 0px 0 #000000';
+      }
+      document.getElementById(i).style.boxShadow = "10px 10px 30px #0000f0";
+      document.getElementById('btn-conf').style.visibility = 'visible';
+    }
+
+    function show_certificate_list(certificates) {
+      certificates = certificates.split(';');
+      let html = '';
+      for (i = 0; i < certificates.length; i++) {
+        let cert = JSON.parse(certificates[i]);
+        let stat_str = '';
+        if (cert.status == 'valid') {
+          stat_str = '&#9989';
+        } else {
+          stat_str = '&#10060';
+        }
+        html += '<div class="card bg-light text-dark" id="' + cert.alias + '" onclick=\"certificate_select(\'' + cert.alias + '\')"> <div class="card-body">';
+        html += '<h4>' + cert.alias + '</h4> ';
+        html += '<p>Subject: ' + cert.subiect + '</p>';
+        html += '<p>Issuer: ' + cert.emitent + '</p>';
+        html += '<p align="right"><h8>Status:</h8>' + stat_str + ';</p>';
+        html += '</div></div> <br>';
+      }
+      document.getElementById('card-parent').innerHTML = html;
+    }
+  </script>
+</head>
+
+<body class="jumbotron">
+  <p><em style="font-size: small">Select from the list below, the certificate you want to use for signing.</em></p>
+  <div>
+    <div class="row">
+      <div class="column" id="card-parent">
+        <div class="alert alert-secondary"> Receiving available certificates ... <br></div>
+      </div>
+    </div>
+  </div>
+  <button type="button" style="visibility: hidden" class="btn-lg btn-primary btn-block" id="btn-conf" onclick="confirm_certificate_selection()">Confirm</button>
+  <script>
+    google.script.run
+      .withFailureHandler(error_handler)
+      .withSuccessHandler(show_certificate_list)
+      .get_certificate_array();
+  </script>
+</body>
+
+</html>

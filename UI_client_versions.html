@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script>
+  function error_handler(error) {
+      let html_result = '<div class="alert alert-danger"> <h3>Error!</h3><strong>Details:</strong><br>' + error + '</div> ' +
+        '<button type="button" class="btn btn-secondary btn-block .btn-sm" onclick="google.script.run.close_win()" >Close</button>';
+      document.body.innerHTML = html_result;
+    }
+  function remove_version(id) {
+      var v = document.getElementById(id);
+      v.parentNode.removeChild(v);
+}
+  function start_delete(id) {
+      var b = document.getElementById(id+'_delete');
+      b.innerHTML = '<button type="button" class="btn btn-info btn-block .btn-sm"><span class="spinner-border spinner-border-sm"></span>Deleting</button>';
+      google.script.run
+         .withFailureHandler(error_handler)
+         .withSuccessHandler(remove_version)
+         .delete_version_info(id);
+  }
+   function display_versions(versions) { 
+       let html = '';
+       for (i = 0; i < versions.length; i++) {
+          html+= '<div class="card bg-light text-dark" id="' + versions[i].id + '">';
+          html+= '<div class="card-body">';
+          html+= '<p><strong>Signing date:</strong><br> <em>' + versions[i].sign_date + '</em></p>';
+          html+= '<p><strong>Signing certificate (alias):</strong><br>' + versions[i].cert + '</p>';
+          html+= '<p align="right"><h8>Available:</h8>' + versions[i].available + '</p>';
+          html+= '<div class="btn-group .btn-sm" id="' + versions[i].id + '_delete">';
+          if (versions[i].view_link == '#') {
+              html+= '<button type="button" class="btn btn-info disabled .btn-sm" >Preview</button>';
+              html+= '<button type="button" class="btn btn-success disabled .btn-sm" >Download</button>';
+          } else {             
+              html+= '<button type="button" class="btn btn-info " onclick="window.open(\''+ versions[i].view_link +'\', \'_blank\')" >Preview</button>';
+              html+= '<button type="button" class="btn btn-success " onclick="window.open(\''+ versions[i].down_link +'\',\'_blank\')" >Download</button>';
+              }
+          html+= '<button type="button" class="btn btn-danger" onclick="start_delete(\'' + versions[i].id + '\')">Delete</button>';    
+          html+= '</div></div></div>';
+       }
+       document.getElementById('card-parent').innerHTML = html;
+   }
+  </script>
+  </head>
+<body class="jumbotron">
+  <p><em style="font-size: small">List of signed versions of this document</em></p>
+  <div>
+    <div class="row">
+      <div class="column" id="card-parent">
+        <div class="alert alert-secondary"> Searching for available versions.... <br></div>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="btn btn-secondary btn-block .btn-sm" id="btn-conf" onclick="google.script.run.close_win()"> Close</button>
+  <script>
+    google.script.run
+      .withFailureHandler(error_handler)
+      .withSuccessHandler(display_versions)
+      .get_version_array();
+  </script>
+</body>
+</html>
+
+

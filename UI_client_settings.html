@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script>
+  function error_handler(error) {
+      let html_result = '<div class="alert alert-danger"> <h3>Error!</h3><br>' + error + '</div> ' +
+        '<button type="button" class="btn btn-danger btn-block .btn-sm" onclick="google.script.host.close()">Close</button>';
+      document.body.innerHTML = html_result;
+      }
+  function update_values(settings) {
+      document.getElementById('client_id').value='';
+      document.getElementById('client_id').placeholder=settings.client_id;
+      document.getElementById('client_secret').value='';
+      document.getElementById('client_secret').placeholder=settings.client_secret;
+      document.getElementById('csc_url').value='';
+      document.getElementById('csc_url').placeholder=settings.csc_url;
+      document.getElementById('dss_url').value='';
+      document.getElementById('dss_url').placeholder=settings.dss_url;
+  }
+  function show_succes() {
+      let html_result = '<div class="alert alert-success"> <h3>Saved!</h3></div> ' +
+        '<button type="button" class="btn btn-danger btn-block .btn-sm" onclick="google.script.host.close()">Close</button>';
+      document.body.innerHTML = html_result;
+  }
+  function save_click() {
+      let client_id = document.getElementById('client_id').value;
+      let client_secret = document.getElementById('client_secret').value;
+      let csc_url = document.getElementById('csc_url').value;
+      let dss_url = document.getElementById('dss_url').value;
+      google.script.run
+        .withFailureHandler(error_handler)
+        .withSuccessHandler(show_succes)
+        .save_settings(client_id,client_secret,csc_url,dss_url);
+  }
+  </script>
+</head>
+<body>
+  <div id="setings_hold">
+  <div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text">Client ID:</span>
+    </div>
+    <input id="client_id" type="text" class="form-control" value="Getting setting...">
+  </div>
+  <div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text">Client secret:</span>
+    </div>
+    <input id="client_secret" type="text" class="form-control" value="Getting setting...">
+  </div>
+  <div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text">CSC API URL:</span>
+    </div>
+    <input id="csc_url" type="text" class="form-control" value="Getting setting...">
+  </div>
+  <div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text">DSS API URL:</span>
+    </div>
+    <input id="dss_url" type="text" class="form-control" value="Getting setting...">
+  </div>
+  <button type="button" class="btn btn-primary btn-block" onClick='save_click()'> Save</button>
+  <button type="button" class="btn btn-danger btn-block" onclick="google.script.host.close()"> Cancel</button>
+  </div>
+</body>
+</html>
+<script>
+google.script.run
+        .withFailureHandler(error_handler)
+        .withSuccessHandler(update_values)
+        .get_settings();
+</script>

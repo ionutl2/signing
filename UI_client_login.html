@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script>
+  function error_handler(error) {
+      let html_result = '<div class="alert alert-danger"> <h3>Error!</h3><strong>Details:</strong><br>' + error + '</div> ' +
+        '<button type="button" class="btn btn-secondary btn-block .btn-sm" onclick="google.script.run.close_win()" >Close</button>';
+      document.body.innerHTML = html_result;
+      }
+  function auth_click() {
+      google.script.run
+        .withFailureHandler(error_handler)
+        .loop_change_login_cert();
+      window.open("<?= url ?>","", "width=700,height=500,top=200,left=400");
+  }
+  </script>
+</head>
+
+<body class="jumbotron">
+  <h4><strong style="font-size: big">Authorization required!</strong></h4>
+  <br><br>
+  <button type="button" class="btn btn-primary btn-block" onClick='auth_click()'> Authorize</button>
+  <button type="button" class="btn btn-danger btn-block" onClick='google.script.run.close_win()'> Cancel</button>
+  <div>
+    <!--<br><br><br><br><br><br><br><br>
+    <p style="font-size:15px;" align="center"> Current redirection address: <a href="<?= redirect ?>"> link </a> </p><br>
+    -->
+  </div>
+</body>
+
+</html>
