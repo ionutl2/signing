@@ -273,7 +273,8 @@ function get_settings() {
     client_id: client_id,
     client_secret: client_secret,
     csc_url: csc_url,
-    dss_url: dss_url
+    dss_url: dss_url,
+    redirect_url: ScriptApp.getService().getUrl()
   };
 }
 
