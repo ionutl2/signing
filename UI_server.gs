@@ -14,7 +14,7 @@ function onOpen() {
 }
 function show_setup() {
   var ui = SpreadsheetApp.getUi();
-  ui.showModalDialog(HtmlService.createHtmlOutputFromFile('UI_client_settings'), 'Add-on parameters');
+  ui.showModalDialog(HtmlService.createHtmlOutputFromFile('UI_client_settings').setHeight(570).setWidth(500), 'Settings');
 }
 function show_about() {
   var ui = SpreadsheetApp.getUi();
