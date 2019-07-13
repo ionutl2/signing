@@ -8,6 +8,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script>
   function error_handler(error) {
       let html_result = '<div class="alert alert-danger"> <h3>Error!</h3><br>' + error + '</div> ' +
@@ -23,6 +24,7 @@
       document.getElementById('csc_url').placeholder=settings.csc_url;
       document.getElementById('dss_url').value='';
       document.getElementById('dss_url').placeholder=settings.dss_url;
+      document.getElementById('redirect_url').value=settings.redirect_url;
   }
   function show_succes() {
       let html_result = '<div class="alert alert-success"> <h3>Saved!</h3></div> ' +
@@ -39,36 +41,82 @@
         .withSuccessHandler(show_succes)
         .save_settings(client_id,client_secret,csc_url,dss_url);
   }
+  function copy_redirect_url() {
+	  let redirect = document.getElementById("redirect_url");
+	  redirect.select();
+	  document.execCommand("copy");
+	  alert("Add-on's redirect URL copied to clipboard!");
+  }
   </script>
 </head>
 <body>
   <div id="setings_hold">
-  <div class="input-group mb-3">
-    <div class="input-group-prepend">
-      <span class="input-group-text">Client ID:</span>
-    </div>
-    <input id="client_id" type="text" class="form-control" value="Getting setting...">
+  <div class="form-group">
+  
+  <div class="card shadow-sm p-0 m-2 bg-white">
+	
+	<div class="card-body p-2">
+      <div class="card-title"> Add-on redirect URL</div>
+	  <div class="input-group">
+			<input id="redirect_url" type="text" class="form-control" value="Getting setting..." readonly>
+			<div class="input-group-append">
+				<button type="button" class="btn btn-info btn-inline ml-1 p-1" onClick='copy_redirect_url()'>Copy&nbsp<i style="font-size:22px" class="material-icons">content_copy</i></button>
+			</div>
+		</div>
+	</div>
+	<div class="card-footer p-0 m-0">
+		<p class="small font-italic p-1 m-0">Supply this value when you generate the credentials for the remote signature service.</p>
+	</div>
   </div>
-  <div class="input-group mb-3">
-    <div class="input-group-prepend">
-      <span class="input-group-text">Client secret:</span>
-    </div>
-    <input id="client_secret" type="text" class="form-control" value="Getting setting...">
+  
+  
+  <div class="card shadow-sm p-0 m-2 bg-white">
+	
+	<div class="card-body p-2">
+      <div class="card-title"> Remote signature service: </div>
+	  
+	  <div class="input-group mb-2">
+		<div class="input-group-prepend">
+		  <span class="input-group-text" style="width:80px">ID:</span>
+		</div>
+		<input id="client_id" type="text" class="form-control" value="Getting setting...">
+	  </div>
+	  <div class="input-group mb-2">
+		<div class="input-group-prepend">
+		  <span class="input-group-text" style="width:80px">Secret:</span>
+		</div>
+		<input id="client_secret" type="text" class="form-control" value="Getting setting...">
+	  </div>
+	  <div class="input-group mb-2">
+		<div class="input-group-prepend">
+		  <span class="input-group-text" style="width:80px">URL:</span>
+		</div>
+		<input id="csc_url" type="text" class="form-control" value="Getting setting...">
+	  </div>
+	  
+	</div>
+	
   </div>
-  <div class="input-group mb-3">
-    <div class="input-group-prepend">
-      <span class="input-group-text">CSC API URL:</span>
-    </div>
-    <input id="csc_url" type="text" class="form-control" value="Getting setting...">
+  
+  <div class="card shadow-sm p-0 m-2 bg-white">
+	
+	<div class="card-body p-2">
+	<div class="card-title"> PDF signature creation service:</div>
+		  <div class="input-group mb-3">
+			<div class="input-group-prepend">
+			  <span class="input-group-text" style="width:80px">URL:</span>
+			</div>
+			<input id="dss_url" type="text" class="form-control" value="Getting setting...">
+		  </div>
+		  </div>
+		  
+	</div>
+	<div class="card shadow-sm p-2 m-2 bg-white">
+		<button type="button" class="btn btn-primary btn-block" onClick='save_click()'> Save</button>
+		<button type="button" class="btn btn-danger btn-block" onclick="google.script.host.close()"> Cancel</button>
+	</div>
   </div>
-  <div class="input-group mb-3">
-    <div class="input-group-prepend">
-      <span class="input-group-text">DSS API URL:</span>
-    </div>
-    <input id="dss_url" type="text" class="form-control" value="Getting setting...">
-  </div>
-  <button type="button" class="btn btn-primary btn-block" onClick='save_click()'> Save</button>
-  <button type="button" class="btn btn-danger btn-block" onclick="google.script.host.close()"> Cancel</button>
+  
   </div>
 </body>
 </html>
